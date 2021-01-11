@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hacker_news/story.dart';
 import 'package:hacker_news/webservice.dart';
+import 'package:connectivity/connectivity.dart';
 
 import 'commentListPage.dart';
 
@@ -13,11 +14,13 @@ class TopArticleList extends StatefulWidget {
 
 class _TopArticleListState extends State<TopArticleList> {
   List<Story> _stories = List<Story>();
+  String result = '';
 
   @override
   void initState() {
     super.initState();
-    _populateTopStories();
+
+    checkStatus();
   }
 
   void _populateTopStories() async {
@@ -49,6 +52,47 @@ class _TopArticleListState extends State<TopArticleList> {
                 CommentListPage(story: story, comments: comments)));
   }
 
+  Widget check() {
+    if (result != null) {
+      return ListView.builder(
+        itemCount: _stories.length,
+        itemBuilder: (_, index) {
+          return ListTile(
+            onTap: () {
+              _navigateToShowCommentsPage(context, index);
+            },
+            title: Text(_stories[index].title, style: TextStyle(fontSize: 20)),
+            trailing: Container(
+                decoration: BoxDecoration(
+                    color: Colors.orange[900],
+                    borderRadius: BorderRadius.all(Radius.circular(30))),
+                alignment: Alignment.center,
+                width: 50,
+                height: 50,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text("${_stories[index].commentIds.length}",
+                      style: TextStyle(color: Colors.white)),
+                )),
+          );
+        },
+      );
+    } else {
+      return Center(
+        child: Text('Please Connect to the Internet'),
+      );
+    }
+  }
+
+  checkStatus() {
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.mobile ||
+          result == ConnectivityResult.wifi) {
+        _populateTopStories();
+      } else {}
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,29 +100,6 @@ class _TopArticleListState extends State<TopArticleList> {
           title: Text("Hacker News"),
           backgroundColor: Colors.orange[900],
         ),
-        body: ListView.builder(
-          itemCount: _stories.length,
-          itemBuilder: (_, index) {
-            return ListTile(
-              onTap: () {
-                _navigateToShowCommentsPage(context, index);
-              },
-              title:
-                  Text(_stories[index].title, style: TextStyle(fontSize: 20)),
-              trailing: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.orange[900],
-                      borderRadius: BorderRadius.all(Radius.circular(30))),
-                  alignment: Alignment.center,
-                  width: 50,
-                  height: 50,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Text("${_stories[index].commentIds.length}",
-                        style: TextStyle(color: Colors.white)),
-                  )),
-            );
-          },
-        ));
+        body: check());
   }
 }
