@@ -54,7 +54,7 @@ class _TopArticleListState extends State<TopArticleList> {
     return Scaffold(
         appBar: AppBar(
           title: Text("Hacker News"),
-          backgroundColor: Colors.orange,
+          backgroundColor: Colors.orange[900],
         ),
         body: ListView.builder(
           itemCount: _stories.length,
@@ -64,11 +64,11 @@ class _TopArticleListState extends State<TopArticleList> {
                 _navigateToShowCommentsPage(context, index);
               },
               title:
-                  Text(_stories[index].title, style: TextStyle(fontSize: 18)),
+                  Text(_stories[index].title, style: TextStyle(fontSize: 20)),
               trailing: Container(
                   decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.all(Radius.circular(16))),
+                      color: Colors.orange[900],
+                      borderRadius: BorderRadius.all(Radius.circular(30))),
                   alignment: Alignment.center,
                   width: 50,
                   height: 50,
