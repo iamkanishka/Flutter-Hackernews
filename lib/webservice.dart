@@ -20,7 +20,7 @@ class Webservice {
     final response = await http.get(UrlHelper.urlForTopStories());
     if (response.statusCode == 200) {
       Iterable storyIds = jsonDecode(response.body);
-      return Future.wait(storyIds.take(15).map((storyId) {
+      return Future.wait(storyIds.take(20).map((storyId) {
         print(storyIds);
         return _getStory(storyId);
       }));
